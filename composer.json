@@ -1,0 +1,22 @@
+{
+  "name": "koma136/yii2-queue-async-chain",
+  "description": "Async chain for Yii2 Queue",
+  "type": "yii2-extension",
+  "require": {
+    "yiisoft/yii2": "~2.0.15",
+    "yiisoft/yii2-queue": "~2.2.0"
+  },
+  "license": "BSD 3-Clause",
+  "authors": [
+    {
+      "name": "Anton Sitnikov",
+      "email": "koma136@mail.ru"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "koma136\\queue\\chain": "src/chain",
+      "koma136\\queue\\async_chain": "src/async",
+    }
+  }
+}
