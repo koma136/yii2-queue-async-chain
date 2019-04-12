@@ -16,7 +16,7 @@
   "autoload": {
     "psr-4": {
       "koma136\\queue\\chain": "src/chain",
-      "koma136\\queue\\async_chain": "src/async",
+      "koma136\\queue\\async_chain": "src/async"
     }
   }
 }
