@@ -16,14 +16,14 @@ interface StorageInterface
      * конкретной группы.
      * @param string $groupId
      */
-    public function addPushedCount($groupId);
+    public function addPushedCount($groupId, $jobId);
 
     /**
      * Метод должен увеличивать счетчик выполненных заданий в рамках группы.
      * @param string $groupId
      * @param null|mixed $result результат выполнения задания.
      */
-    public function addDoneCount($groupId, $result);
+    public function addDoneCount($groupId, $jobId, $result);
 
     /**
      * Метод должен вырнуть прогресс выполнения группы заданий.

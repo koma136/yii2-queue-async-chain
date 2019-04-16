@@ -1,6 +1,6 @@
 <?php
 
-namespace koma136\queue\chain\db\migrations;
+namespace koma136\queue\async_chain\db\migrations;
 
 use yii\db\Migration;
 
@@ -8,9 +8,9 @@ use yii\db\Migration;
  * Class m190412_165143_QueueChain
  * @package yii\queue\chain\db\migrations
  */
-class m190412_165143_QueueChain extends Migration
+class m190412_165143_QueueAsyncChain extends Migration
 {
-    public $tableName = '{{%queue-chain}}';
+    public $tableName = '{{%queue-async-chain}}';
     public $tableOptions;
 
 
@@ -18,10 +18,10 @@ class m190412_165143_QueueChain extends Migration
     {
         $this->createTable($this->tableName, [
             'id' => $this->primaryKey(),
-            'job_id' => $this->integer()->notNull(),
+            'job' => $this->binary()->notNull(),
+            'job_id' => $this->integer(),
             'group' => $this->string()->notNull(),
-            'status' => $this->integer(),
-            'results' => $this->binary()
+            'status' => $this->integer()
         ], $this->tableOptions);
 
         $this->createIndex('group', $this->tableName, 'group');

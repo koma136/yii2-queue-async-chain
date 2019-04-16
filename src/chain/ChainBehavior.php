@@ -2,9 +2,7 @@
 
 namespace koma136\queue\chain;
 
-use Yii;
 use yii\di\Instance;
-use yii\queue\ErrorEvent;
 use yii\queue\ExecEvent;
 use yii\queue\PushEvent;
 use yii\queue\Queue;
@@ -65,7 +63,7 @@ class ChainBehavior extends \yii\base\Behavior
         if (!$event->job instanceof ChainJobInterface) {
             return;
         }
-        $this->storage->addPushedCount($event->job->getGroupId());
+        $this->storage->addPushedCount($event->job->getGroupId(),$event->id);
     }
 
     /**
@@ -76,12 +74,11 @@ class ChainBehavior extends \yii\base\Behavior
         if (!$event->job instanceof ChainJobInterface) {
             return;
         }
-        //TODO Сделать передачу результата из JobInterface::execute() в ExecEvent
-        $this->registerResult($event->job, null);
+        $this->registerResult($event);
     }
 
     /**
-     * @param ErrorEvent $event
+     * @param ExecEvent $event
      */
     public function afterError(ExecEvent $event)
     {
@@ -91,21 +88,22 @@ class ChainBehavior extends \yii\base\Behavior
         if ($event->retry) {
             return;
         }
-        $this->registerResult($event->job, null);
+        $this->registerResult($event);
     }
 
     /**
      * @param ChainJobInterface $job
      * @param mixed $result
      */
-    protected function registerResult(ChainJobInterface $job, $result)
+    protected function registerResult(ExecEvent $event)
     {
-        $groupId = $job->getGroupId();
-        $this->storage->addDoneCount($groupId, $result);
+        $groupId = $event->job->getGroupId();
+        $this->storage->addDoneCount($groupId, $event->id, $event->result);
+        var_dump($this->storage->getProgress($groupId));
         list($pos, $size) = $this->storage->getProgress($groupId);
         if ($size > 0 && $pos == $size) {
             $results = $this->storage->reset($groupId);
-            $job->finalizeGroup($results);
+            $event->job->finalizeGroup($this, $results);
         }
     }
 }

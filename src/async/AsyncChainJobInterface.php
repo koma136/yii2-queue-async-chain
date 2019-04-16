@@ -1,6 +1,7 @@
 <?php
 namespace koma136\queue\async_chain;
 
+use yii\queue\ExecEvent;
 use yii\queue\Queue;
 
 /**
@@ -9,24 +10,30 @@ use yii\queue\Queue;
  */
 interface AsyncChainJobInterface
 {
-    /**
-     * Уникальный идентификатор группы заданий, по которому будет определяться сколько этих заданий
-     * отправлено и сколько выполнено.
-     * @return string
-     */
-    public function getGroupId();
 
     /**
      * Метод будет запущен после того, как выполнится вся группа заданий.
      * @param Queue $queue
      * @param array $results результаты выполненных заданий.
+     * @param $error
      */
-    public function finalizeGroup($queue, array $results);
+    public function finalizeGroup(ExecEvent $event);
 
     /**
-     * Порядковый номер в очереди последовательных задачь
-     * @return integer
+     * Устанавливает уникальный идентификатор для группы заданий
+     * @param string $groupId
+     * @return mixed
      */
-    public function getIndex();
+    public function setGroupId(string $groupId);
 
+    /**
+     * @return string
+     */
+    public function getGroupId();
+
+    /**
+     * @param $rezult
+     * @return mixed
+     */
+    public function setRezultPrevJob($rezult);
 }

@@ -2,11 +2,14 @@
 
 namespace koma136\queue\chain\db;
 
+use koma136\queue\StatusHelper;
 use yii\base\BaseObject;
 use yii\db\Connection;
+use yii\db\Query;
 use yii\di\Instance;
-use yii\mutex\Mutex;
 use koma136\queue\chain\StorageInterface;
+use yii\queue\serializers\PhpSerializer;
+use yii\queue\serializers\SerializerInterface;
 
 /**
  * Class DbStorage
@@ -19,13 +22,13 @@ class DbStorage extends BaseObject implements StorageInterface
      */
     public $db = 'db';
     /**
-     * @var Mutex|array|string
-     */
-    public $mutex = 'mutex';
-    /**
      * @var int timeout
      */
     public $mutexTimeout = 3;
+    /**
+     * @var SerializerInterface|array
+     */
+    public $serializer = PhpSerializer::class;
     /**
      * @var string table name
      */
@@ -35,23 +38,70 @@ class DbStorage extends BaseObject implements StorageInterface
     {
         parent::init();
         $this->db = Instance::ensure($this->db, Connection::class);
-        $this->mutex = Instance::ensure($this->mutex, Mutex::class);
+        $this->serializer = Instance::ensure($this->serializer, SerializerInterface::class);
+
     }
 
-    public function addDoneCount($groupId, $result)
+    /**
+     * @param string $groupId
+     * @param $job
+     * @param mixed|null $result
+     * @throws \yii\db\Exception
+     */
+    public function addDoneCount($groupId, $jobId, $result)
     {
-        // TODO: Implement addDoneCount() method.
+        $this->db->createCommand()->update($this->tableName, [
+            'status' => StatusHelper::DONE,
+            'results' => $this->serializer->serialize($result)
+        ],[
+            'job_id' => $jobId,
+            'group' => $groupId
+            ])->execute();
     }
-    public function addPushedCount($groupId)
+
+    /**
+     * @param string $groupId
+     * @param $job
+     * @throws \yii\db\Exception
+     */
+    public function addPushedCount($groupId, $jobId)
     {
-        // TODO: Implement addPushedCount() method.
+        $this->db->createCommand()->insert($this->tableName, [
+            'job_id' => $jobId,
+            'group' => $groupId,
+            'status' => StatusHelper::PUSHED
+        ])->execute();
     }
+
+    /**
+     * @param string $groupId
+     * @return array|void
+     */
     public function getProgress($groupId)
     {
-        // TODO: Implement getProgress() method.
+        return [
+            (int) (new Query())->from($this->tableName)->where(['group' => $groupId,'status'=>StatusHelper::DONE])->count('id',$this->db),
+            (int) (new Query())->from($this->tableName)->where(['group' => $groupId])->count('id',$this->db)
+        ];
+
+
     }
+
+    /**
+     * @param string $groupId
+     * @return array
+     * @throws \yii\db\Exception
+     */
     public function reset($groupId)
     {
-        // TODO: Implement reset() method.
+        $rezuils = [];
+        $query = (new Query())->from($this->tableName)->where(['group' => $groupId,'status'=>StatusHelper::DONE]);
+        foreach ($query->each(100,$this->db) as $row){
+            $rezuils[] = $this->serializer->unserialize($row['results']);
+        }
+        $this->db->createCommand()
+            ->delete($this->tableName, ['group' => $groupId])
+            ->execute();
+        return $rezuils;
     }
 }

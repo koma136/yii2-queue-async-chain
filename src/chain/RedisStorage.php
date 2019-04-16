@@ -34,7 +34,7 @@ class RedisStorage extends BaseObject implements StorageInterface
     /**
      * @inheritdoc
      */
-    public function addPushedCount($groupId)
+    public function addPushedCount($groupId, $job)
     {
         $this->redis->incr("$this->prefix.$groupId.pushed");
     }
@@ -42,7 +42,7 @@ class RedisStorage extends BaseObject implements StorageInterface
     /**
      * @inheritdoc
      */
-    public function addDoneCount($groupId, $result)
+    public function addDoneCount($groupId, $job, $result)
     {
         $this->redis->incr("$this->prefix.$groupId.done");
         if ($result !== null) {
