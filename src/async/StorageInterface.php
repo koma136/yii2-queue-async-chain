@@ -15,7 +15,7 @@ interface StorageInterface
      * @param array $jobs
      * @return mixed
      */
-    public function push(array $jobs);
+    public function add(array $jobs);
 
     /**
      * @param string $groupId
@@ -34,4 +34,10 @@ interface StorageInterface
      * @return mixed
      */
     public function setPushedJob(int $Id, int $jobId);
+
+    /**
+     * @param string $groupId
+     * @return mixed
+     */
+    public function remove(string $groupId);
 }

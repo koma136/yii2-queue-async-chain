@@ -2,7 +2,7 @@
 
 namespace koma136\queue\chain\db;
 
-use koma136\queue\StatusHelper;
+use koma136\queue\chain\StatusHelper;
 use yii\base\BaseObject;
 use yii\db\Connection;
 use yii\db\Query;

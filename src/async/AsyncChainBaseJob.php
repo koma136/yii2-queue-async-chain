@@ -4,13 +4,14 @@
 namespace koma136\queue\async_chain;
 
 
+use yii\base\BaseObject;
 use yii\queue\JobInterface;
 
 /**
  * Class AsyncChainBaseJob
  * @package koma136\queue\async_chain
  */
-class AsyncChainBaseJob
+class AsyncChainBaseJob extends BaseObject
 {
     /**
      * результат выполнения предыдущей задачи

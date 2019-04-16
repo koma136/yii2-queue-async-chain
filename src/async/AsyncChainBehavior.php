@@ -52,6 +52,7 @@ class AsyncChainBehavior extends \yii\base\Behavior
         }
         $this->storage->setDoneJob($event->id);
         if(!$this->pushNextJob($event->job->getGroupId(),$event->result)){
+            $this->storage->remove($event->job->getGroupId());
             $event->job->finalizeGroup($event);
         }
     }
@@ -67,6 +68,7 @@ class AsyncChainBehavior extends \yii\base\Behavior
         if ($event->retry) {
             return;
         }
+        $this->storage->remove($event->job->getGroupId());
         $event->job->finalizeGroup($event);
     }
 
@@ -87,7 +89,7 @@ class AsyncChainBehavior extends \yii\base\Behavior
                 $job->setGroupId($groupId);
             }
         }
-        $this->storage->push($jobs);
+        $this->storage->add($jobs);
 
         $this->pushNextJob($groupId, null);
     }
@@ -99,7 +101,8 @@ class AsyncChainBehavior extends \yii\base\Behavior
         $row = $this->storage->getNextJob($groupId);
         if(!$row) return false;
         $row['job']->setRezultPrevJob($rezult);
-        $jobId = $this->push($row['job']);
+        $jobId = $this->owner->push($row['job']);
         $this->storage->setPushedJob($row['id'],$jobId);
+        return $jobId;
     }
 }

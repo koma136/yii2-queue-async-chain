@@ -4,7 +4,7 @@ namespace koma136\queue\async_chain\db;
 
 use koma136\queue\async_chain\AsyncChainJobInterface;
 use \koma136\queue\async_chain\StorageInterface;
-use koma136\queue\StatusHelper;
+use koma136\queue\chain\StatusHelper;
 use yii\base\BaseObject;
 use yii\db\Connection;
 use yii\db\Query;
@@ -48,7 +48,7 @@ class DbStorage extends BaseObject implements StorageInterface
      * @return mixed|void
      * @throws \yii\db\Exception
      */
-    public function push(array $jobs)
+    public function add(array $jobs)
     {
         /**
          * @var AsyncChainJobInterface $job
@@ -57,7 +57,7 @@ class DbStorage extends BaseObject implements StorageInterface
             $this->db->createCommand()->insert($this->tableName, [
                 'job' => $this->serializer->serialize($job),
                 'group' => $job->getGroupId(),
-                'status' => StatusHelper::PUSHED
+                'status' => StatusHelper::NEW
             ])->execute();
         }
     }

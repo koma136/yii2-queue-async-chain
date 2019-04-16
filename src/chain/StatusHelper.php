@@ -1,7 +1,7 @@
 <?php
 
 
-namespace koma136\queue;
+namespace koma136\queue\chain;
 
 
 class StatusHelper
