@@ -94,8 +94,8 @@ class AsyncChainBehavior extends \yii\base\Behavior
             }
         }
         $this->storage->add($jobs);
-
         $this->pushNextJob($groupId, null);
+        return $groupId;
     }
 
     /**
