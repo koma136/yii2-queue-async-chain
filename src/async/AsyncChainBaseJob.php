@@ -5,7 +5,6 @@ namespace koma136\queue\async_chain;
 
 
 use yii\base\BaseObject;
-use yii\queue\JobInterface;
 
 /**
  * Class AsyncChainBaseJob
@@ -27,7 +26,8 @@ class AsyncChainBaseJob extends BaseObject
     /**
      * @param string $groupId
      */
-    public function setGroupId(string $groupId){
+    public function setGroupId(string $groupId)
+    {
         $this->groupId = $groupId;
     }
 

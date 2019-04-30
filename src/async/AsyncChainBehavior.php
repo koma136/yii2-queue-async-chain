@@ -22,6 +22,10 @@ class AsyncChainBehavior extends \yii\base\Behavior
      */
     public $security;
     /**
+     * @var integer $delay
+     */
+    public $delay;
+    /**
      * @inheritdoc
      */
     public function init()
@@ -96,12 +100,14 @@ class AsyncChainBehavior extends \yii\base\Behavior
 
     /**
      * @param $groupId
+     * @param $rezult
+     * @return bool
      */
     public function pushNextJob($groupId, $rezult){
         $row = $this->storage->getNextJob($groupId);
         if(!$row) return false;
         $row['job']->setRezultPrevJob($rezult);
-        $jobId = $this->owner->push($row['job']);
+        $jobId = $this->owner->delay($this->delay)->push($row['job']);
         $this->storage->setPushedJob($row['id'],$jobId);
         return $jobId;
     }
