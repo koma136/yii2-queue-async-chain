@@ -118,5 +118,18 @@ class DbStorage extends BaseObject implements StorageInterface
         ])->execute();
     }
 
+    /**
+     * @param string $groupId
+     * @return array|void
+     */
+    public function getGroupJobs(string $groupId)
+    {
+        $jobs = [];
+        $rows = (new Query())->from($this->tableName)->where(['group' => $groupId])->andWhere(['not', ['job_id' => null]])->orderBy('id');
+        foreach ($rows->each($this->db) as $row){
+            $jobs[] = $row['job_id'];
+        }
+        return $jobs;
+    }
 
 }

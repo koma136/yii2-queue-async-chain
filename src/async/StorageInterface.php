@@ -40,4 +40,10 @@ interface StorageInterface
      * @return mixed
      */
     public function remove(string $groupId);
+
+    /**
+     * @param string $groupId
+     * @return array
+     */
+    public function getGroupJobs(string $groupId);
 }

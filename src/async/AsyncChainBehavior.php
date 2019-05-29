@@ -111,4 +111,13 @@ class AsyncChainBehavior extends \yii\base\Behavior
         $this->storage->setPushedJob($row['id'],$jobId);
         return $jobId;
     }
+
+    /**
+     * @param string $groupId
+     */
+    public function removeGroupJobs(string $groupId){
+        foreach ($this->storage->getGroupJobs($groupId) as $job_id){
+            $this->owner->remove($job_id);
+        }
+    }
 }
