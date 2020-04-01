@@ -72,6 +72,7 @@ class AsyncChainBehavior extends \yii\base\Behavior
         if ($event->retry) {
             return;
         }
+        $this->removeGroupJobs($event->job->getGroupId());
         $this->storage->remove($event->job->getGroupId());
         $event->job->finalizeGroup($event);
     }
